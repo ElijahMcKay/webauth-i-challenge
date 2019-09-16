@@ -20,7 +20,13 @@ router.get('/users', restricted, (req, res) => {
 
 //post requests
 router.post('/register', (req, res) => {
-    Users.addUser()
+    const body = req.body
+
+    let hash = bcrypt.hashSync(body.password, 12); 
+
+    body.password = hash; 
+
+    Users.addUser(body)
         .then(user => {
             res.status(201).json(user); 
         })
@@ -31,7 +37,7 @@ router.post('/register', (req, res) => {
 
 router.post('/login', (req, res) => {
     const { username, password } = req.body
-    
+
     Users.getUserById({ username })
         .first()
         .then(user => {
