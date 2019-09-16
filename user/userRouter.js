@@ -36,16 +36,21 @@ router.post('/register', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
-    const { username, password } = req.body
-
-    Users.getUserById({ username })
-        .first()
+    const { username, password } = req.body; 
+    
+    Users.getUserByUsername(username)
         .then(user => {
+            console.log(user); 
+            console.log(password); 
+            console.log(user.password); 
             if(user && bcrypt.compareSync(password, user.password)) {
                 res.status(200).json({ message: `Welcome ${user.username}`})
             } else {
                 res.status(401).json({ message: `Invalid login attempt`})
             } 
+        })
+        .catch(err => {
+            res.status(500).json(err); 
         })
 })
 
